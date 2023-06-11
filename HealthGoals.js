@@ -4,7 +4,7 @@ import { View, Text } from 'react-native';
 import { TextInput,Pressable,StyleSheet,ScrollView,Alert   } from 'react-native';
 import SelectDropdown from 'react-native-select-dropdown'
 
-const activityLevelArray = ["sedentary", "light exercise", "heavy exercise"," moderate exercise", "extra active"]
+const activityLevelArray = ["sedentary", "Lightly active", "Moderately active","Very active", "Super active"]
 const healthGoalArray = ["weight loss", "weight maintenance", "weight gain"]
 const genderArray=["Male", "Female"]
 
@@ -15,6 +15,11 @@ const HealthGoals = () => {
   const [weight,setWeight]=useState('');
   const [activityLevel,setActivityLevel]=useState('');
   const [healthGoal,setHealthGoal]=useState('');
+  const [BMR,setBmr]=useState('');
+
+  const updatBmr=(text)=>{
+    setBmr(text);
+  }
 
   const handleAgeChange= (text)=>{
     setAge(text);
@@ -45,33 +50,33 @@ const HealthGoals = () => {
   }
 
   const handleCalculate = () =>{
-    BMR=0;
+    newBMR=0;
     if(!(age && height && weight && gender && activityLevel && healthGoal)){
       Alert.alert('Validation Error', 'Please fill in all the fields.');
     }else{
       if(gender=="Male"){
-        BMR = 88.362 + 13.397 * weight + 4.799 * height - 5.677 * age ;
+        newBMR = 88.362 + 13.397 * weight + 4.799 * height - 5.677 * age ;
       }else if(gender=="Female"){
-        BMR = 447.593 + 9.247 * weight + 3.098 * height - 4.330 * age ;
+        newBMR = 447.593 + 9.247 * weight + 3.098 * height - 4.330 * age ;
      }
-     if(activityLevel=="sedentary"){
-      BMR=BMR*1.2;
-     }else if(activityLevel=="light exercise"){
-      BMR=BMR*1.375;
-     }else if(activityLevel=="moderate exercise"){
-      BMR=BMR*1.55;
-     }else if(activityLevel=="heavy exercise"){
-      BMR=BMR*1.725;
-     }else if(activityLevel=="extra active"){
-      BMR=BMR*1.9;
+     if(activityLevel==activityLevelArray[0]){
+      newBMR=newBMR*1.2;
+     }else if(activityLevel==activityLevelArray[1]){
+      newBMR=newBMR*1.375;
+     }else if(activityLevel==activityLevelArray[2]){
+      newBMR=newBMR*1.55;
+     }else if(activityLevel==activityLevelArray[3]){
+      newBMR=newBMR*1.725;
+     }else if(activityLevel==activityLevelArray[4]){
+      newBMR=newBMR*1.9;
      }
      if(healthGoal=="weight loss"){
-        BMR = BMR-BMR * 0.1 ;
+      newBMR = newBMR-(newBMR * 0.1) ;
      }else if(healthGoal=="weight gain"){
-        BMR = BMR+BMR * 0.1 ;
+      newBMR =newBMR+(newBMR * 0.1) ;
      }
-     Alert.alert('Validation Error', BMR);
     }
+    updatBmr(newBMR.toFixed(0));
   }
 
   return (
@@ -120,6 +125,10 @@ const HealthGoals = () => {
               <Text style={styles.ButtonText}> calculate </Text>
             </Pressable>
           </View>
+          <View style={styles.ResultCube}>
+              <Text style={styles.ResultValue}>Total caloric intake : </Text>
+              <Text style={styles.ResultValue}>{BMR} calorise</Text>
+          </View>
       </View>
       </ScrollView>
   );
@@ -166,12 +175,26 @@ const styles = StyleSheet.create({
   },
   InputName: {
     backgroundColor: 'red',
-    borderRadius: 10,
     width: 100,
     borderRadius:5,
     fontWeight: 'bold',
     color:'white',
     overflow:"hidden",
+  },
+  ResultCube:{
+    marginTop:40,
+    width: 250,
+    height: 100,
+    borderRadius:5,
+    borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: 'red',
+  },
+  ResultValue : {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'red',
   }
   });
 
