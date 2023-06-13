@@ -50,7 +50,7 @@ const HealthGoals = () => {
   }
 
   const handleCalculate = () =>{
-    newBMR=0;
+    let newBMR=0;
     if(!(age && height && weight && gender && activityLevel && healthGoal)){
       Alert.alert('Validation Error', 'Please fill in all the fields.');
     }else{
