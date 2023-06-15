@@ -1,5 +1,5 @@
-import {React,useState,useEffect} from 'react';
-import { View, TextInput, StyleSheet,ScrollView,Pressable,Text, Alert } from 'react-native';
+import {React,useState} from 'react';
+import { View, TextInput, StyleSheet,ScrollView,Pressable,Text } from 'react-native';
 import axios from 'axios';
 
 const FoodDatabase = () => {

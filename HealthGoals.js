@@ -127,7 +127,7 @@ const HealthGoals = () => {
           </View>
           <View style={styles.ResultCube}>
               <Text style={styles.ResultValue}>Total caloric intake : </Text>
-              <Text style={styles.ResultValue}>{BMR} calorise</Text>
+              <Text style={styles.ResultValue}>{BMR/1000} kcal</Text>
           </View>
       </View>
       </ScrollView>
