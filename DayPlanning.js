@@ -1,5 +1,7 @@
 import React, { useEffect,useState } from 'react';
-import { View, Text ,TouchableOpacity, StyleSheet,Pressable} from 'react-native';
+import { View, Text ,TouchableOpacity, StyleSheet,Pressable,Image} from 'react-native';
+import { FlatGrid } from 'react-native-super-grid';
+import { Ionicons } from '@expo/vector-icons';
 
 const DayPlanning = ({ navigation,route }) => {
 
@@ -9,6 +11,21 @@ const DayPlanning = ({ navigation,route }) => {
   }, []);
 
   const { item } = route.params;
+
+  const [items, setItems] = React.useState([
+    { name: 'Spicy Mango Chicken', code: '#1abc9c' ,calorise: '400 kcal',motivation : 'Hustle',image : 'https://www.kasandbox.org/programming-images/avatars/purple-pi.png'},
+    { name: 'Cheesy Garlic Breadsticks', code: '#2ecc71' ,calorise: '400 kcal',motivation : 'Tenacious',image : 'https://www.kasandbox.org/programming-images/avatars/mr-pants.png' },
+    { name: 'BBQ Pulled Pork Sandwich', code: '#3498db' ,calorise: ' 400 kcal',motivation : 'Warrior' ,image : 'https://www.kasandbox.org/programming-images/avatars/mr-pants-purple.png'},
+    { name: 'Creamy Mushroom Risotto', code: '#9b59b6' ,calorise: '400 kcal',motivation : 'Thrive' ,image : 'https://www.kasandbox.org/programming-images/avatars/mr-pants-green.png'},
+    { name: 'Teriyaki Salmon Bowl', code: '#34495e' ,calorise: '400 kcal',motivation : 'Fearless' ,image : 'https://www.kasandbox.org/programming-images/avatars/marcimus-red.png'},
+    { name: 'Greek Salad with Feta Cheese', code: '#16a085' ,calorise: '400 kcal',motivation : 'Strength',image : 'https://www.kasandbox.org/programming-images/avatars/marcimus-orange.png' },
+    { name: 'Cajun Shrimp Pasta', code: '#27ae60' ,calorise: '400 kcal',motivation : 'Power' ,image : 'https://www.kasandbox.org/programming-images/avatars/spunky-sam.png'},
+  ]);
+
+  const handleDeleteItem=(name)=>{
+    const updatedItems = items.filter((item) => item.name !== name);
+    setItems(updatedItems);
+  }
 
   const [SelectedTabIndex,setSelectedTabIndex]=useState(0);
   return (
@@ -65,12 +82,29 @@ const DayPlanning = ({ navigation,route }) => {
       {SelectedTabIndex==0 ? 
       (
       <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-            <Text>Breakfast meals</Text>
+       <FlatGrid
+    itemDimension={130}
+    data={items}
+    style={styles.gridView}
+    spacing={10}
+    showsVerticalScrollIndicator={false}
+    renderItem={({ item }) => (
+        <View style={[styles.itemContainer, { backgroundColor: item.code }]} >
+           
+            <Text style={styles.itemName}>{item.name}</Text>
+            <Text style={styles.itemCode}>{item.calorise}</Text>
+            <TouchableOpacity
+            style={styles.DeletButton}
+            onPress={() => handleDeleteItem(item.name)}
+            >
+            <Ionicons name="trash-outline" size={24} color="red" />
+          </TouchableOpacity>
         </View>
-        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+    )}
+  />
+        <View style={{justifyContent:'center',alignItems:'center',paddingBottom:130}}>
             <Pressable style={styles.button}>
-              <Text style={styles.ButtonText} > update my breakfast </Text>
+              <Text style={styles.ButtonText} > update my dinner </Text>
             </Pressable>
         </View>
       </View>
@@ -78,21 +112,55 @@ const DayPlanning = ({ navigation,route }) => {
       SelectedTabIndex == 1 ? 
       (
       <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-            <Text>Lunch meals</Text>
+       <FlatGrid
+    itemDimension={130}
+    data={items}
+    style={styles.gridView}
+    spacing={10}
+    showsVerticalScrollIndicator={false}
+    renderItem={({ item }) => (
+        <View style={[styles.itemContainer, { backgroundColor: item.code }]} >
+           
+            <Text style={styles.itemName}>{item.name}</Text>
+            <Text style={styles.itemCode}>{item.calorise}</Text>
+            <TouchableOpacity
+            style={styles.DeletButton}
+            onPress={() => handleDeleteItem(item.name)}
+            >
+            <Ionicons name="trash-outline" size={24} color="red" />
+          </TouchableOpacity>
         </View>
-        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+    )}
+  />
+        <View style={{justifyContent:'center',alignItems:'center',paddingBottom:130}}>
             <Pressable style={styles.button}>
-              <Text style={styles.ButtonText} > update my Lunch </Text>
+              <Text style={styles.ButtonText} > update my dinner </Text>
             </Pressable>
         </View>
       </View>
       ):(
-      <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-            <Text>Dinner meals</Text>
+      <View style={{flex:8,justifyContent:'center',alignItems:'center'}}>
+       <FlatGrid
+    itemDimension={130}
+    data={items}
+    style={styles.gridView}
+    spacing={10}
+    showsVerticalScrollIndicator={false}
+    renderItem={({ item }) => (
+        <View style={[styles.itemContainer, { backgroundColor: item.code }]} >
+           
+            <Text style={styles.itemName}>{item.name}</Text>
+            <Text style={styles.itemCode}>{item.calorise}</Text>
+            <TouchableOpacity
+            style={styles.DeletButton}
+            onPress={() => handleDeleteItem(item.name)}
+            >
+            <Ionicons name="trash-outline" size={24} color="red" />
+          </TouchableOpacity>
         </View>
-        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+    )}
+  />
+        <View style={{justifyContent:'center',alignItems:'center',paddingBottom:130}}>
             <Pressable style={styles.button}>
               <Text style={styles.ButtonText} > update my dinner </Text>
             </Pressable>
@@ -118,6 +186,39 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     fontWeight: 'bold',
     color: 'white',
+  },
+  gridView: {
+    marginTop: 10,
+    flex: 3,
+  },
+  itemContainer: {
+    justifyContent: 'flex-end',
+    borderRadius: 5,
+    padding: 10,
+    height: 100,
+  },
+  itemName: {
+    fontSize: 12,
+    color: 'black',
+    fontWeight: '300',
+    fontWeight: 'bold',
+  },
+  itemCode: {
+    fontWeight: '600',
+    fontSize: 12,
+    color: 'black',
+  },
+  itemMotivation:{
+    width:40,
+    height:40,
+    paddingTop:40
+  },
+  centeredContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  DeletButton:{
+    marginLeft:90
   }
   });
 
