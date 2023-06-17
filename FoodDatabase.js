@@ -8,7 +8,7 @@ import { Picker } from '@react-native-picker/picker';
 import SelectDropdown from 'react-native-select-dropdown'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const mealPlan= {
+let mealPlan= {
   "Monday":{
     "Breakfast": [],
     "Lunch": [],
@@ -103,13 +103,13 @@ const FoodDatabase = (navigation) => {
 
   const confirmForm = async () => {
     try {
-      const planStringGet = await AsyncStorage.getItem('@lan');
+      const planStringGet = await AsyncStorage.getItem('plan');
       mealPlan = JSON.parse(planStringGet)
 
       //return jsonValue != null ? JSON.parse(jsonValue) : null;
     } 
-    catch(e) {
-      console.warn("Failed to get Plan, maybe because first time");
+    catch(error) {
+      console.warn(error);
       
     }
     if(!quantity || !day || !meal){
@@ -125,16 +125,12 @@ const FoodDatabase = (navigation) => {
     try {
       const planStringSet = JSON.stringify(mealPlan);
       await AsyncStorage.setItem('plan', planStringSet);
-    } catch (e) {
-      console.warn("Failed to save Plan");
+    } catch (error) {
+      console.warn(error);
       return;
     }
-
-    
-
-    console.log(selectedItem);
     console.log(mealPlan);
-    
+    console.log(selectedItem);    
   };
 
   
