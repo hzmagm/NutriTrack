@@ -102,35 +102,55 @@ const FoodDatabase = (navigation) => {
   };
 
   const confirmForm = async () => {
+    console.log("Start ConfirmForm");
     try {
+      console.log("Start try getPlan");
       const planStringGet = await AsyncStorage.getItem('plan');
-      mealPlan = JSON.parse(planStringGet)
-
-      //return jsonValue != null ? JSON.parse(jsonValue) : null;
+      console.log(planStringGet);
+      // weird, should be != or !==
+      if(planStringGet == null){
+        console.log("Parsing");
+        //const json = JSON.parse(planStringGet)
+        mealPlan = JSON.parse(planStringGet)
+        console.log("End try getPlan");
+      }
     } 
     catch(error) {
+      console.log("Get plan Error");
       console.warn(error);
       
     }
+    console.log("Start form verif");
     if(!quantity || !day || !meal){
       Alert.alert('Validation Error', 'Please fill in all the fields.');
     }
     else if(quantity <1){
       Alert.alert('Validation Error', 'Please choose a valid quantity.');
     }
+    console.log("end form verif");
+
+    console.log("Start loop");
+    console.log(day);
+    console.log(meal);
+    console.log(mealPlan);
     for(let i = 0; i < quantity; i++){
       mealPlan[day][meal].push(selectedItem);
     }
+    console.log("end loop");
 
     try {
       const planStringSet = JSON.stringify(mealPlan);
       await AsyncStorage.setItem('plan', planStringSet);
-    } catch (error) {
+    } 
+    catch (error) {
+      console.log("Set plan Error");
       console.warn(error);
       return;
     }
     console.log(mealPlan);
     console.log(selectedItem);    
+    console.log("End ConfirmForm");
+
   };
 
   
