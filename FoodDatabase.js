@@ -155,7 +155,7 @@ const FoodDatabase = (navigation) => {
     
 
     const renderFoodItem = ({ item, index }) => (
-      <TouchableOpacity style = {styles.item} onPress={() => {setSelectedItem(item.foodName); setIsVisible(true);}} key={index}>
+      <TouchableOpacity style = {styles.item} onPress={() => {setSelectedItem({"name":item.foodName,"calories":item.calories}); setIsVisible(true);}} key={index}>
         <Text>{item.foodName}</Text>
         <Text>{item.calories} cal</Text>
       </TouchableOpacity>
