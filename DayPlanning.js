@@ -9,7 +9,7 @@ const DayPlanning = ({ navigation,route }) => {
     const screenName = route.params.item.name;
     navigation.setOptions({ title: screenName });
   }, []);
-
+  
   const { item } = route.params;
 
   const [items, setItems] = React.useState([
@@ -45,7 +45,7 @@ const DayPlanning = ({ navigation,route }) => {
         justifyContent:'center'
       }}>
         <TouchableOpacity style={{
-          width:'33%',
+          width:'25%',
           height:'85%',
           backgroundColor:SelectedTabIndex==0 ? 'red':'white',
           borderRadius:15,
@@ -55,7 +55,7 @@ const DayPlanning = ({ navigation,route }) => {
             <Text style={{color:SelectedTabIndex==0 ?'#FFFFFF':'#000',fontSize:15,fontWeight:700}}>Breakfast</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{
-          width:'33%',
+          width:'25%',
           height:'85%',
           backgroundColor: SelectedTabIndex==1 ? 'red':'white',
           borderRadius:15,
@@ -67,7 +67,7 @@ const DayPlanning = ({ navigation,route }) => {
             <Text style={{color:SelectedTabIndex==1 ?'#FFFFFF':'#000',fontSize:15,fontWeight:700}}>Lunch</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{
-          width:'33%',
+          width:'25%',
           height:'85%',
           backgroundColor:SelectedTabIndex==2 ? 'red':'white',
           borderRadius:15,
@@ -76,7 +76,19 @@ const DayPlanning = ({ navigation,route }) => {
           }}          
           onPress={()=>{setSelectedTabIndex(2)}}
           >
-            <Text style={{color:SelectedTabIndex==2 ?'#FFFFFF':'#000',fontSize:15,fontWeight:700}}>Dinner</Text>
+            <Text style={{color:SelectedTabIndex==2 ?'#FFFFFF':'#000',fontSize:15,fontWeight:700}}>Snack</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{
+          width:'25%',
+          height:'85%',
+          backgroundColor:SelectedTabIndex==3 ? 'red':'white',
+          borderRadius:15,
+          justifyContent:'center',
+          alignItems:'center'
+          }}          
+          onPress={()=>{setSelectedTabIndex(3)}}
+          >
+            <Text style={{color:SelectedTabIndex==3 ?'#FFFFFF':'#000',fontSize:15,fontWeight:700}}>Dinner</Text>
         </TouchableOpacity>
       </View>
       {SelectedTabIndex==0 ? 
@@ -104,7 +116,7 @@ const DayPlanning = ({ navigation,route }) => {
   />
         <View style={{justifyContent:'center',alignItems:'center',paddingBottom:130}}>
             <Pressable style={styles.button}>
-              <Text style={styles.ButtonText} > update my dinner </Text>
+              <Text style={styles.ButtonText}> update my breakfast </Text>
             </Pressable>
         </View>
       </View>
@@ -134,12 +146,13 @@ const DayPlanning = ({ navigation,route }) => {
   />
         <View style={{justifyContent:'center',alignItems:'center',paddingBottom:130}}>
             <Pressable style={styles.button}>
-              <Text style={styles.ButtonText} > update my dinner </Text>
+              <Text style={styles.ButtonText} > update my Lunch </Text>
             </Pressable>
         </View>
       </View>
       ):(
-      <View style={{flex:8,justifyContent:'center',alignItems:'center'}}>
+        SelectedTabIndex==3 ?
+      (<View style={{flex:8,justifyContent:'center',alignItems:'center'}}>
        <FlatGrid
     itemDimension={130}
     data={items}
@@ -162,10 +175,38 @@ const DayPlanning = ({ navigation,route }) => {
   />
         <View style={{justifyContent:'center',alignItems:'center',paddingBottom:130}}>
             <Pressable style={styles.button}>
+              <Text style={styles.ButtonText} > update my snack </Text>
+            </Pressable>
+        </View>
+      </View>
+      ):(
+        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+       <FlatGrid
+    itemDimension={130}
+    data={items}
+    style={styles.gridView}
+    spacing={10}
+    showsVerticalScrollIndicator={false}
+    renderItem={({ item }) => (
+        <View style={[styles.itemContainer, { backgroundColor: item.code }]} >
+            <Text style={styles.itemName}>{item.name}</Text>
+            <Text style={styles.itemCode}>{item.calorise}</Text>
+            <TouchableOpacity
+            style={styles.DeletButton}
+            onPress={() => handleDeleteItem(item.name)}
+            >
+            <Ionicons name="trash-outline" size={24} color="red" />
+          </TouchableOpacity>
+        </View>
+    )}
+  />
+        <View style={{justifyContent:'center',alignItems:'center',paddingBottom:130}}>
+            <Pressable style={styles.button}>
               <Text style={styles.ButtonText} > update my dinner </Text>
             </Pressable>
         </View>
       </View>
+      )
       ))}
 
     </View>
