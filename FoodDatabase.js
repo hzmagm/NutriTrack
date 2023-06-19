@@ -1,162 +1,170 @@
-import {React,useState} from 'react';
+import { React, useState, useEffect } from "react";
 
-import { View, TextInput, StyleSheet,ScrollView,Pressable,Text, TouchableOpacity, FlatList, Alert } from 'react-native';
-
-import axios from 'axios';
-import { Modal } from 'react-native-paper';
-import { Picker } from '@react-native-picker/picker';
-import SelectDropdown from 'react-native-select-dropdown'
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-let mealPlan= {
-  "Monday":{
-    "Breakfast": [],
-    "Lunch": [],
-    "Snack": [],
-    "Dinner": []
-  },
-  "Tuesday":{
-    "Breakfast": [],
-    "Lunch": [],
-    "Snack": [],
-    "Dinner": []
-  },
-  "Wednesday":{
-    "Breakfast": [],
-    "Lunch": [],
-    "Snack": [],
-    "Dinner": []
-  },
-  "Thursday":{
-    "Breakfast": [],
-    "Lunch": [],
-    "Snack": [],
-    "Dinner": []
-  },
-  "Friday":{
-    "Breakfast": [],
-    "Lunch": [],
-    "Snack": [],
-    "Dinner": []
-  },
-  "Saturday":{
-    "Breakfast": [],
-    "Lunch": [],
-    "Snack": [],
-    "Dinner": []
-  },
-  "Sunday":{
-    "Breakfast": [],
-    "Lunch": [],
-    "Snack": [],
-    "Dinner": []
-  }
-};
-
-
-
-const FoodDatabase = (navigation) => {
-
-  const [isVisible, setIsVisible]=useState(false);
-  const [searchInput,setSearchInput]=useState('');
-  const [data,setData]=useState([]);
-  const [selectedItem,setSelectedItem]=useState(null);
-  const [day,setDay]=useState("");
-  const [meal,setMeal]=useState("");
-  const [quantity,setQuantity]=useState(0);
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  Alert,
+} from "react-native";
+import randomColor from "randomcolor";
+import axios from "axios";
+import { Modal } from "react-native-paper";
+import SelectDropdown from "react-native-select-dropdown";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+const FoodDatabase = () => {
+  const navigation = useNavigation();
+  const [isVisible, setIsVisible] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const [data, setData] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [day, setDay] = useState("");
+  const [meal, setMeal] = useState("");
+  const [quantity, setQuantity] = useState(0);
   const foodList = [];
-  const handleSearchInputChange=(text)=>{
+
+  // Create an array to store meal data for each day of the week
+  const [mealPlan, setMealPlan] = useState([
+    {
+      day: "Monday",
+      meals: { Breakfast: [], Lunch: [], Dinner: [], Snack: [] },
+    },
+    {
+      day: "Tuesday",
+      meals: { Breakfast: [], Lunch: [], Dinner: [], Snack: [] },
+    },
+    {
+      day: "Wednesday",
+      meals: { Breakfast: [], Lunch: [], Dinner: [], Snack: [] },
+    },
+    {
+      day: "Thursday",
+      meals: { Breakfast: [], Lunch: [], Dinner: [], Snack: [] },
+    },
+    {
+      day: "Friday",
+      meals: { Breakfast: [], Lunch: [], Dinner: [], Snack: [] },
+    },
+    {
+      day: "Saturday",
+      meals: { Breakfast: [], Lunch: [], Dinner: [], Snack: [] },
+    },
+    {
+      day: "Sunday",
+      meals: { Breakfast: [], Lunch: [], Dinner: [], Snack: [] },
+    },
+  ]);
+
+  const handleSearchInputChange = (text) => {
     setSearchInput(text);
-  }
-  const mealArray=["Breakfast", "Lunch", "Dinner", "Snack"];
-  const days=["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  };
+  const mealArray = ["Breakfast", "Lunch", "Dinner", "Snack"];
+  const days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
 
   const fetchData = async () => {
     try {
       const result = await axios.get(
-        `https://trackapi.nutritionix.com/v2/search/instant?query=${searchInput}`, 
+        `https://trackapi.nutritionix.com/v2/search/instant?query=${searchInput}`,
         {
           headers: {
-            'x-app-id': '4159ca4b',
-            'x-app-key': 'b07d4d82251acddd2f2d99c0daa449ca	', 
+            "x-app-id": "4159ca4b",
+            "x-app-key": "b07d4d82251acddd2f2d99c0daa449ca	",
           },
-        },
+        }
       );
-      
+
       setData(extractData(result.data));
-      console.log(result.data);
+      // console.log("data....", result.data);
     } catch (error) {
       console.warn(error);
     }
-    };
+  };
 
-  /*const selectItem = (item) => {
-    setSelectedItem(item);
-    console.log("Item pressed");
-    setIsVisible(true);
-    console.log(isVisible);
-  };*/
+  const addMeal = (day, mealType, meal) => {
+    setMealPlan((prevMealPlan) => {
+      const updatedMealPlan = [...prevMealPlan];
+      const selectedDayIndex = updatedMealPlan.findIndex(
+        (item) => item.day === day
+      );
 
-   const closeModal = () => {
+      if (selectedDayIndex !== -1) {
+        const selectedDay = { ...updatedMealPlan[selectedDayIndex] };
+        selectedDay.meals[mealType].push(meal);
+        updatedMealPlan[selectedDayIndex] = selectedDay;
+        console.log(`Added "${meal}" to ${mealType} on ${day}`);
+        AsyncStorage.setItem("mealPlan", JSON.stringify(updatedMealPlan)).catch(
+          (error) => {
+            console.log("Error storing meal plan in AsyncStorage:", error);
+          }
+        );
+      } else {
+        console.log(`Invalid day: ${day}`);
+      }
+
+      return updatedMealPlan;
+    });
+    setDay("");
+    setMeal("");
+    setQuantity("");
     setIsVisible(false);
   };
 
+  const closeModal = () => {
+    setIsVisible(false);
+    setDay("");
+    setMeal("");
+    setQuantity("");
+  };
   const confirmForm = async () => {
-    console.log("Start ConfirmForm");
-    try {
-      console.log("Start try getPlan");
-      const planStringGet = await AsyncStorage.getItem('plan');
-      console.log(planStringGet);
-      // weird, should be != or !==
-      if(planStringGet == null){
-        console.log("Parsing");
-        //const json = JSON.parse(planStringGet)
-        mealPlan = JSON.parse(planStringGet)
-        console.log("End try getPlan");
-      }
-    } 
-    catch(error) {
-      console.log("Get plan Error");
-      console.warn(error);
-      
-    }
-    console.log("Start form verif");
-    if(!quantity || !day || !meal){
-      Alert.alert('Validation Error', 'Please fill in all the fields.');
-    }
-    else if(quantity <1){
-      Alert.alert('Validation Error', 'Please choose a valid quantity.');
-    }
-    console.log("end form verif");
+    let _data = {
+      meal: selectedItem.name,
+      calories: selectedItem.calories,
+      color: randomColor(),
+      quantity: quantity,
+    };
 
-    console.log("Start loop");
-    console.log(day);
-    console.log(meal);
-    console.log(mealPlan);
-    for(let i = 0; i < quantity; i++){
-      mealPlan[day][meal].push(selectedItem);
-    }
-    console.log("end loop");
-
-    try {
-      const planStringSet = JSON.stringify(mealPlan);
-      await AsyncStorage.setItem('plan', planStringSet);
-    } 
-    catch (error) {
-      console.log("Set plan Error");
-      console.warn(error);
+    if (!quantity || !day || !meal) {
+      Alert.alert("Validation Error", "Please fill in all the fields.");
+      return;
+    } else if (quantity < 1) {
+      Alert.alert("Validation Error", "Please choose a valid quantity.");
       return;
     }
-    console.log(mealPlan);
-    console.log(selectedItem);    
-    console.log("End ConfirmForm");
 
+    addMeal(day, meal, _data); 
   };
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      const loadData = async () => {
+        try {
+          const storedMealPlan = await AsyncStorage.getItem("mealPlan");
+          if (storedMealPlan) {
+            setMealPlan(JSON.parse(storedMealPlan));
+          }
+        } catch (error) {
+          console.log("Error retrieving meal plan from AsyncStorage:", error);
+        }
+      };
 
-  
+      loadData();
+      return unsubscribe;
+    });
+  }, [navigation]);
 
   const extractData = (data) => {
-    const categories = ['branded', 'self'];
+    const categories = ["branded", "self"];
     categories.forEach((category) => {
       if (data[category]) {
         data[category].forEach((item) => {
@@ -172,145 +180,177 @@ const FoodDatabase = (navigation) => {
     return foodList;
   };
 
-    
-
-    const renderFoodItem = ({ item, index }) => (
-      <TouchableOpacity style = {styles.item} onPress={() => {setSelectedItem({"name":item.foodName,"calories":item.calories}); setIsVisible(true);}} key={index}>
-        <Text>{item.foodName}</Text>
-        <Text>{item.calories} cal</Text>
-      </TouchableOpacity>
-    );
+  const renderFoodItem = ({ item, index }) => (
+    <TouchableOpacity
+      style={styles.item}
+      onPress={() => {
+        setSelectedItem({ name: item.foodName, calories: item.calories });
+        setIsVisible(true);
+      }}
+      key={index.toString()}
+    >
+      <Text>{item.foodName}</Text>
+      <Text>{item.calories} cal</Text>
+    </TouchableOpacity>
+  );
 
   return (
-    <ScrollView keyboardShouldPersistTaps='handled' >
+    <View style={styles.container}>
       <View style={styles.container}>
-      <TextInput style={styles.input} placeholder='Enter your Search item...' onChangeText={handleSearchInputChange} ></TextInput>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter your Search item..."
+          onChangeText={handleSearchInputChange}
+          value={searchInput.toString()}
+        ></TextInput>
         <Pressable style={styles.button} onPress={fetchData}>
-              <Text style={styles.ButtonText} > Search </Text>
+          <Text style={styles.ButtonText}> Search </Text>
         </Pressable>
-        
+
         <FlatList
           data={data}
+          nestedScrollEnabled
           renderItem={renderFoodItem}
-          keyExtractor={(item) => item.id}
-          //ItemSeparatorComponent={() => <View style={styles.separator} />}
+          keyExtractor={(item, index) => index.toString()}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
-        
-        <Text>{data ? JSON.stringify(data) : 'No data'}</Text>
-        
+
+        <Text>{data ? null : "No data"}</Text>
       </View>
-
-      <Modal style={styles.modal} visible={isVisible}>
-
-        <Text>Modal hehe</Text>
-
-        <TextInput value ={quantity} style={styles.input} keyboardType='numeric' maxLength={2}  placeholder='Quantity' onChangeText ={(text) => {setQuantity(text)}}/>
-
-
-        <Text>Meal</Text>
-
-        <SelectDropdown
-          data={mealArray}
-          value ={meal}
-          onSelect={(selectedItem) => {
-            setMeal(selectedItem);
-          }}
-          /*buttonTextAfterSelection={(selectedItem) => {
-            return selectedItem
-          }}*/
-        />
-
-        <Text>Day</Text>
-
-        <SelectDropdown
-          data={days}
-          value ={day}
-          onSelect={(selectedItem) => {
-            setDay(selectedItem);
-          }}
-          /*buttonTextAfterSelection={(selectedItem) => {
-            return selectedItem
-          }}*/
-/>
-
-        {/*<Picker
-        //selectedValue={selectedValue}
-        //onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
-        >
-          <Picker.Item label="Breakfast" value="Breakfast" />
-          <Picker.Item label="Lunch" value="Lunch" />
-          <Picker.Item label="Dinner" value="Dinner" />
-          <Picker.Item label="Snack" value="Snack" />
-        </Picker>*/}
-
-        <View>
-
-        <Pressable style={styles.button} onPress={closeModal}>
-          <Text style={styles.ButtonText} > Close </Text>
-        </Pressable>
-
-        <Pressable style={styles.button} onPress={confirmForm}>
-          <Text style={styles.ButtonText} > Confirm </Text>
-        </Pressable>
-
-
-        </View>
-
-
-      </Modal>
       
-    </ScrollView>
+      <Modal style={styles.modal} visible={isVisible}>
+        <View style={styles.modalView}>
+          <Text style={styles.textModal}>Quantity</Text>
+          <TextInput
+            value={quantity.toString()}
+            style={styles.input}
+            keyboardType="numeric"
+            maxLength={2}
+            placeholder="Quantity"
+            onChangeText={(text) => {
+              setQuantity(text);
+            }}
+          />
+
+          <Text style={styles.textModal}>Meal</Text>
+
+          <SelectDropdown
+            data={mealArray}
+            buttonStyle={styles.dropDown}
+            value={meal}
+            onSelect={(selectedItem) => {
+              setMeal(selectedItem);
+            }}
+            /*buttonTextAfterSelection={(selectedItem) => {
+            return selectedItem
+          }}*/
+          />
+
+          <Text style={styles.textModal}>Day</Text>
+
+          <SelectDropdown
+            data={days}
+            value={day}
+            buttonStyle={styles.dropDown}
+            onSelect={(selectedItem) => {
+              setDay(selectedItem);
+            }}
+            
+          />
+          <View style={styles.btnView}>
+            <Pressable style={styles.button} onPress={closeModal}>
+              <Text style={styles.ButtonText}> Close </Text>
+            </Pressable>
+
+            <Pressable style={styles.button} onPress={confirmForm}>
+              <Text style={styles.ButtonText}> Confirm </Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container:{
-    paddingTop:50,
+  container: {
+    paddingTop: 10,
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
-  input:{
-
+  input: {
     width: 200,
     height: 40,
     borderWidth: 1,
-    borderColor: 'red',
+    borderColor: "red",
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 10,
   },
   button: {
-    width: 150,
+    width: 120,
     height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 10,
-    backgroundColor: 'red'
+    backgroundColor: "red",
+    marginVertical: 10,
+  },
+  dropDown: {
+    borderWidth: 1,
+    borderColor: "red",
   },
   ButtonText: {
     fontSize: 16,
     lineHeight: 21,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: "bold",
+    color: "white",
   },
   item: {
     borderWidth: 1,
-    borderColor: 'red',
+    borderColor: "red",
     borderRadius: 5,
     padding: 2,
-    margin: 2,
+    backgroundColor: "#e2f0f0",
+    width: "95%",
+  },
+  separator: {
+    marginVertical: 3,
   },
   modal: {
-    justifyContent: 'center',  
-    alignItems: 'center',   
-    backgroundColor : "white",   
-    height: 600 ,
-    borderRadius:10,    
-    marginTop: 80,
-    marginHorizontal:10
-
-  }
-  });
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    marginHorizontal: 40,
+  },
+  modalView: {
+    borderWidth: 2,
+    borderColor: "red",
+    borderRadius: 15,
+    backgroundColor: "#e9f7ec",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.29,
+    shadowRadius: 4.65,
+    elevation: 9,
+  },
+  textModal: {
+    marginVertical: 5,
+    fontWeight: "bold",
+  },
+  btnView: {
+    flexDirection: "row",
+    width: "80%",
+    marginHorizontal: 10,
+    marginVertical: 15,
+    justifyContent: "space-between",
+  },
+});
 
 export default FoodDatabase;
