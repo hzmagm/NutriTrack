@@ -4,9 +4,9 @@
 A React Native app for tracking calories and planning meals. Set goals, track food intake, and plan meals.
 
 ## Features
-- plan your daily meals for each week.
-- add a range of food types from the api.
-- calulate the daily caloric intake.
+- Plan your daily meals for each week.
+- Add a range of food types from the api.
+- Calulate the daily caloric intake.
 
 ## Installation
 1. Clone the repository.
