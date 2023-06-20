@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
+  SafeAreaView
 } from "react-native";
 import randomColor from "randomcolor";
 import axios from "axios";
@@ -19,6 +20,7 @@ import { useNavigation } from "@react-navigation/native";
 const FoodDatabase = () => {
   const navigation = useNavigation();
   const [isVisible, setIsVisible] = useState(false);
+  const [noItemFound, setNoItemFound] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [data, setData] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -75,6 +77,10 @@ const FoodDatabase = () => {
   ];
 
   const fetchData = async () => {
+    if(!searchInput){
+      Alert.alert("Validation Error", "Please enter your search.");
+      return
+    }
     try {
       const result = await axios.get(
         `https://trackapi.nutritionix.com/v2/search/instant?query=${searchInput}`,
@@ -87,9 +93,17 @@ const FoodDatabase = () => {
       );
 
       setData(extractData(result.data));
+      if(result.data.branded.length == 0 && result.data.common.length==0){
+        setNoItemFound(true);
+      }
+      else{
+        setNoItemFound(false);
+      }
+      
       // console.log("data....", result.data);
     } catch (error) {
       console.warn(error);
+      setNoItemFound(true);
     }
   };
 
@@ -144,7 +158,9 @@ const FoodDatabase = () => {
       return;
     }
 
-    addMeal(day, meal, _data); 
+    addMeal(day, meal, _data);
+    Alert.alert("Success", "Item was added to your plan.");
+
   };
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -190,8 +206,12 @@ const FoodDatabase = () => {
       }}
       key={index.toString()}
     >
-      <Text>{item.foodName}</Text>
-      <Text>{item.calories} cal</Text>
+      <Text 
+        style={styles.itemText}>
+        {item.foodName}
+      </Text>
+      
+      <Text style={styles.itemText}>{item.calories} cal</Text>
     </TouchableOpacity>
   );
 
@@ -209,11 +229,16 @@ const FoodDatabase = () => {
           <Text style={styles.ButtonText}> Search </Text>
         </Pressable>
 
+        {
+
+          noItemFound==true && <Text>No item found</Text>
+        }
+
         <FlatList
 
           numColumns={2}
           style={{
-            marginTop: 20,
+            marginTop: 10,
             flex: 1,
             marginBottom: 80
           }}
@@ -224,7 +249,7 @@ const FoodDatabase = () => {
           keyExtractor={(item, index) => index.toString()}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
-
+      </View>
       
       <Modal style={styles.modal} visible={isVisible}>
         <View style={styles.modalView}>
@@ -266,7 +291,7 @@ const FoodDatabase = () => {
             
           />
           <View style={styles.btnView}>
-            <Pressable style={styles.button} onPress={closeModal}>
+            <Pressable style={[styles.button, {backgroundColor:"#B0B0B0"}]} onPress={closeModal}>
               <Text style={styles.ButtonText}> Close </Text>
             </Pressable>
 
@@ -308,10 +333,6 @@ const styles = StyleSheet.create({
     backgroundColor: "red",
     marginVertical: 10,
   },
-  dropDown: {
-    borderWidth: 1,
-    borderColor: "red",
-  },
   ButtonText: {
     fontSize: 16,
     lineHeight: 21,
@@ -319,14 +340,18 @@ const styles = StyleSheet.create({
     color: "white",
   },
   item: {
-    borderWidth: 1,
-    borderColor: "red",
+    
     borderRadius: 5,
-    padding: 2,
+    padding: 5,
+    backgroundColor:"#FFD2D2",
 
     margin: 2,
     width: "45%"
     
+  },
+
+  itemText: {
+    fontWeight:"bold"
   },
   modal: {
     justifyContent: "center",
@@ -335,10 +360,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 40,
   },
   modalView: {
-    borderWidth: 2,
-    borderColor: "red",
+    paddingTop :10,
     borderRadius: 15,
-    backgroundColor: "#e9f7ec",
+    backgroundColor: "#FFFFFF",
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
@@ -356,10 +380,10 @@ const styles = StyleSheet.create({
   },
   btnView: {
     flexDirection: "row",
-    width: "80%",
+    width: "90%",
     marginHorizontal: 10,
     marginVertical: 15,
-    justifyContent: "space-between",
+    justifyContent:"space-around"
   },
 });
 

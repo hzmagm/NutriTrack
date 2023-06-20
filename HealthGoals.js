@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color:'white',
     overflow:"hidden",
+    paddingLeft:5
   },
   ResultCube:{
     marginTop:40,
