@@ -25,6 +25,7 @@ const FoodDatabase = () => {
   const [day, setDay] = useState("");
   const [meal, setMeal] = useState("");
   const [quantity, setQuantity] = useState(0);
+
   const foodList = [];
 
   // Create an array to store meal data for each day of the week
@@ -195,7 +196,8 @@ const FoodDatabase = () => {
   );
 
   return (
-    <View style={styles.container}>
+
+    <SafeAreaView style={{flex: 1}} keyboardShouldPersistTaps='handled' >
       <View style={styles.container}>
         <TextInput
           style={styles.input}
@@ -208,12 +210,14 @@ const FoodDatabase = () => {
         </Pressable>
 
         <FlatList
+
+          numColumns={2}
           style={{
-            marginTop: 10,
+            marginTop: 20,
             flex: 1,
-            marginBottom: 100
+            marginBottom: 80
           }}
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={{ paddingBottom: 80 }}
           data={data}
           nestedScrollEnabled
           renderItem={renderFoodItem}
@@ -221,8 +225,6 @@ const FoodDatabase = () => {
           ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
 
-        <Text>{data ? null : "No data"}</Text>
-      </View>
       
       <Modal style={styles.modal} visible={isVisible}>
         <View style={styles.modalView}>
@@ -272,9 +274,12 @@ const FoodDatabase = () => {
               <Text style={styles.ButtonText}> Confirm </Text>
             </Pressable>
           </View>
+
         </View>
       </Modal>
-    </View>
+
+      
+    </SafeAreaView>
   );
 };
 
@@ -318,11 +323,10 @@ const styles = StyleSheet.create({
     borderColor: "red",
     borderRadius: 5,
     padding: 2,
-    backgroundColor: "#e2f0f0",
-    width: "95%",
-  },
-  separator: {
-    marginVertical: 3,
+
+    margin: 2,
+    width: "45%"
+    
   },
   modal: {
     justifyContent: "center",
