@@ -3,20 +3,20 @@ import { View, Text ,TouchableOpacity, StyleSheet,Pressable,Image} from 'react-n
 import { FlatGrid } from 'react-native-super-grid';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useIsFocused } from "@react-navigation/native";
 const DayPlanning = ({ navigation, route }) => {
   const [mealPlan, setMealPlan] = React.useState([]);
-  const [dayData, setDayData] = React.useState([' ']);
+  const [dayData, setDayData] = React.useState([]);
   const [type, setType] = React.useState("Breakfast");
 
   const [SelectedTabIndex, setSelectedTabIndex] = useState(0);
   useEffect(() => {
-    const screenName = route.params.item.name;
+    const screenName = route?.params?.item?.name;
     navigation.setOptions({ title: screenName });
   }, [mealPlan]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("blur", () => {
+      // Reset the stack's navigation history
       navigation.reset({
         index: 1,
         routes: [{ name: "MealPlanning" }],
@@ -32,7 +32,7 @@ const DayPlanning = ({ navigation, route }) => {
         if (storedMealPlan) {
           setMealPlan(JSON.parse(storedMealPlan));
           let _dayData = getDayData(
-            route.params.item.name,
+            route?.params?.item?.name,
             JSON.parse(storedMealPlan)
           );
           setDayData(_dayData);
@@ -59,15 +59,13 @@ const DayPlanning = ({ navigation, route }) => {
       if (selectedDayIndex !== -1) {
         const selectedDay = { ...updatedMealPlan[selectedDayIndex] };
 
+        // Check if the mealType exists in the meals object
         if (selectedDay.meals.hasOwnProperty(mealType)) {
           const mealArray = selectedDay.meals[mealType];
 
           if (index >= 0 && index < mealArray.length) {
             mealArray.splice(index, 1);
-            console.log(
-              `Deleted item at index ${index} from ${mealType} on ${day}`
-            );
-
+            // Store the updated meal plan in AsyncStorage
             AsyncStorage.setItem(
               "mealPlan",
               JSON.stringify(updatedMealPlan)
@@ -206,27 +204,31 @@ const DayPlanning = ({ navigation, route }) => {
       </View>
 
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <FlatGrid
-          itemDimension={130}
-          data={dayData[type]}
-          style={styles.gridView}
-          spacing={10}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item, index }) => (
-            <View
-              style={[styles.itemContainer, { backgroundColor: item.color }]}
-            >
-              <Text style={styles.itemName}>{item.meal}</Text>
-              <Text style={styles.itemCode}>{item.calories} kcal</Text>
-              <TouchableOpacity
-                style={styles.DeletButton}
-                onPress={() => deleteMeal(route.params.item.name, type, index)}
+        {dayData[type] && (
+          <FlatGrid
+            itemDimension={130}
+            data={dayData[type]}
+            style={styles.gridView}
+            spacing={10}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item, index }) => (
+              <View
+                style={[styles.itemContainer, { backgroundColor: item.color }]}
               >
-                <Ionicons name="trash-outline" size={24} color="red" />
-              </TouchableOpacity>
-            </View>
-          )}
-        />
+                <Text style={styles.itemName}>{item.meal}</Text>
+                <Text style={styles.itemCode}>{item.calories}</Text>
+                <TouchableOpacity
+                  style={styles.DeletButton}
+                  onPress={() =>
+                    deleteMeal(route.params.item.name, type, index)
+                  }
+                >
+                  <Ionicons name="trash-outline" size={24} color="red" />
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+        )}
       </View>
 
       <View

@@ -85,9 +85,9 @@ const HealthGoals = () => {
             <View style={styles.form}>
                 <Text style={styles.InputName} >Age </Text>
                 <TextInput style={styles.input} onChangeText ={handleAgeChange} inputMode="numeric"></TextInput>
-                <Text style={styles.InputName}>Height </Text>
+                <Text style={styles.InputName}>Height(cm) </Text>
                 <TextInput style={styles.input} onChangeText ={handleHeightChange} keyboardType="decimal-pad"></TextInput>
-                <Text style={styles.InputName}>Weight </Text>
+                <Text style={styles.InputName}>Weight (Kg) </Text>
                 <TextInput style={styles.input} onChangeText ={handleWeightChange} keyboardType="decimal-pad"></TextInput>
                 <Text style={styles.InputName}>Gender </Text>
                 <SelectDropdown

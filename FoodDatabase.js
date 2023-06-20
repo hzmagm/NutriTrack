@@ -7,6 +7,7 @@ import {
   Pressable,
   Text,
   TouchableOpacity,
+  KeyboardAvoidingView,
   FlatList,
   Alert,
   SafeAreaView
@@ -118,7 +119,6 @@ const FoodDatabase = () => {
         const selectedDay = { ...updatedMealPlan[selectedDayIndex] };
         selectedDay.meals[mealType].push(meal);
         updatedMealPlan[selectedDayIndex] = selectedDay;
-        console.log(`Added "${meal}" to ${mealType} on ${day}`);
         AsyncStorage.setItem("mealPlan", JSON.stringify(updatedMealPlan)).catch(
           (error) => {
             console.log("Error storing meal plan in AsyncStorage:", error);
@@ -251,7 +251,11 @@ const FoodDatabase = () => {
         />
       </View>
       
-      <Modal style={styles.modal} visible={isVisible}>
+      <Modal  style={styles.modal} visible={isVisible}  >
+      <KeyboardAvoidingView
+    behavior="position"
+    enabled
+  >
         <View style={styles.modalView}>
           <Text style={styles.textModal}>Quantity</Text>
           <TextInput
@@ -274,9 +278,6 @@ const FoodDatabase = () => {
             onSelect={(selectedItem) => {
               setMeal(selectedItem);
             }}
-            /*buttonTextAfterSelection={(selectedItem) => {
-            return selectedItem
-          }}*/
           />
 
           <Text style={styles.textModal}>Day</Text>
@@ -299,8 +300,9 @@ const FoodDatabase = () => {
               <Text style={styles.ButtonText}> Confirm </Text>
             </Pressable>
           </View>
-
         </View>
+        </KeyboardAvoidingView>
+
       </Modal>
 
       
@@ -370,7 +372,6 @@ const styles = StyleSheet.create({
       width: 0,
       height: 0,
     },
-    shadowOpacity: 0.29,
     shadowRadius: 4.65,
     elevation: 9,
   },

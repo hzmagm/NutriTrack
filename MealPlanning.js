@@ -92,8 +92,10 @@ const MealPlanning = ({ navigation }) => {
         style={styles.gridView}
         spacing={10}
         renderItem={({ item }) => {
+          // Find the corresponding day in mealPlan
           const dayData = mealPlan.find((day) => day.day === item.name);
 
+          // Calculate the total calories for the day
           const totalCalories = dayData
             ? Object.values(dayData.meals).reduce((sum, meals) => {
                 return (
