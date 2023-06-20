@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
+  SafeAreaView
 } from "react-native";
 import randomColor from "randomcolor";
 import axios from "axios";
@@ -19,6 +20,7 @@ import { useNavigation } from "@react-navigation/native";
 const FoodDatabase = () => {
   const navigation = useNavigation();
   const [isVisible, setIsVisible] = useState(false);
+  const [noItemFound, setNoItemFound] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [data, setData] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -75,6 +77,10 @@ const FoodDatabase = () => {
   ];
 
   const fetchData = async () => {
+    if(!searchInput){
+      Alert.alert("Validation Error", "Please enter your search.");
+      return
+    }
     try {
       const result = await axios.get(
         `https://trackapi.nutritionix.com/v2/search/instant?query=${searchInput}`,
@@ -87,9 +93,17 @@ const FoodDatabase = () => {
       );
 
       setData(extractData(result.data));
+      if(result.data.branded.length == 0 && result.data.common.length==0){
+        setNoItemFound(true);
+      }
+      else{
+        setNoItemFound(false);
+      }
+      
       // console.log("data....", result.data);
     } catch (error) {
       console.warn(error);
+      setNoItemFound(true);
     }
   };
 
@@ -144,7 +158,9 @@ const FoodDatabase = () => {
       return;
     }
 
-    addMeal(day, meal, _data); 
+    addMeal(day, meal, _data);
+    Alert.alert("Success", "Item was added to your plan.");
+
   };
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -212,6 +228,11 @@ const FoodDatabase = () => {
         <Pressable style={styles.button} onPress={fetchData}>
           <Text style={styles.ButtonText}> Search </Text>
         </Pressable>
+
+        {
+
+          noItemFound==true && <Text>No item found</Text>
+        }
 
         <FlatList
 
