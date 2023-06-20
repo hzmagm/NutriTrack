@@ -1,6 +1,6 @@
 import {React,useState} from 'react';
 
-import { View, TextInput, StyleSheet,ScrollView,Pressable,Text, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { View, TextInput, StyleSheet,ScrollView,Pressable,Text, TouchableOpacity, FlatList, Alert, SafeAreaView } from 'react-native';
 
 import axios from 'axios';
 import { Modal } from 'react-native-paper';
@@ -147,7 +147,7 @@ const FoodDatabase = (navigation) => {
       console.warn(error);
       return;
     }
-    console.log(mealPlan);
+    console.log(mealPlan["Friday"]["Breakfast"][0]);
     console.log(selectedItem);    
     console.log("End ConfirmForm");
 
@@ -182,7 +182,7 @@ const FoodDatabase = (navigation) => {
     );
 
   return (
-    <ScrollView keyboardShouldPersistTaps='handled' >
+    <SafeAreaView style={{flex: 1}} keyboardShouldPersistTaps='handled' >
       <View style={styles.container}>
       <TextInput style={styles.input} placeholder='Enter your Search item...' onChangeText={handleSearchInputChange} ></TextInput>
         <Pressable style={styles.button} onPress={fetchData}>
@@ -190,21 +190,27 @@ const FoodDatabase = (navigation) => {
         </Pressable>
         
         <FlatList
+          numColumns={2}
+          style={{
+            marginTop: 20,
+            flex: 1,
+            marginBottom: 80
+          }}
+          //numColumns={2}
+          contentContainerStyle={{ paddingBottom: 80 }}
           data={data}
           renderItem={renderFoodItem}
           keyExtractor={(item) => item.id}
           //ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
-        
-        <Text>{data ? JSON.stringify(data) : 'No data'}</Text>
-        
+ 
       </View>
 
       <Modal style={styles.modal} visible={isVisible}>
 
         <Text>Modal hehe</Text>
 
-        <TextInput value ={quantity} style={styles.input} keyboardType='numeric' maxLength={2}  placeholder='Quantity' onChangeText ={(text) => {setQuantity(text)}}/>
+        <TextInput value ={quantity.toString()} style={styles.input} keyboardType='numeric' maxLength={2}  placeholder='Quantity' onChangeText ={(text) => {setQuantity(text)}}/>
 
 
         <Text>Meal</Text>
@@ -215,9 +221,6 @@ const FoodDatabase = (navigation) => {
           onSelect={(selectedItem) => {
             setMeal(selectedItem);
           }}
-          /*buttonTextAfterSelection={(selectedItem) => {
-            return selectedItem
-          }}*/
         />
 
         <Text>Day</Text>
@@ -228,30 +231,17 @@ const FoodDatabase = (navigation) => {
           onSelect={(selectedItem) => {
             setDay(selectedItem);
           }}
-          /*buttonTextAfterSelection={(selectedItem) => {
-            return selectedItem
-          }}*/
-/>
-
-        {/*<Picker
-        //selectedValue={selectedValue}
-        //onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
-        >
-          <Picker.Item label="Breakfast" value="Breakfast" />
-          <Picker.Item label="Lunch" value="Lunch" />
-          <Picker.Item label="Dinner" value="Dinner" />
-          <Picker.Item label="Snack" value="Snack" />
-        </Picker>*/}
-
+          
+        />  
         <View>
 
-        <Pressable style={styles.button} onPress={closeModal}>
-          <Text style={styles.ButtonText} > Close </Text>
-        </Pressable>
+          <Pressable style={styles.button} onPress={closeModal}>
+            <Text style={styles.ButtonText} > Close </Text>
+          </Pressable>
 
-        <Pressable style={styles.button} onPress={confirmForm}>
-          <Text style={styles.ButtonText} > Confirm </Text>
-        </Pressable>
+          <Pressable style={styles.button} onPress={confirmForm}>
+            <Text style={styles.ButtonText} > Confirm </Text>
+          </Pressable>
 
 
         </View>
@@ -259,7 +249,7 @@ const FoodDatabase = (navigation) => {
 
       </Modal>
       
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -300,6 +290,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 2,
     margin: 2,
+    width: "45%"
+    
   },
   modal: {
     justifyContent: 'center',  
