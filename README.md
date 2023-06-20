@@ -47,12 +47,8 @@ following this commande will allow you either use your browser or your personal 
 
 ## Screenshots
 
-![](screenshots/image004.png)
-![](screenshots/image006.png)
-![](screenshots/image009.jpg)
-![](screenshots/image011.jpg)
-![](screenshots/image013.jpg)
-![](screenshots/image053.jpg)
+<img src="screenshots/image004.png" width="200"/> <img src="screenshots/image006.png" width="200"/> 
+<img src="screenshots/image009.jpg" width="200"/> <img src="screenshots/image011.jpg" width="200"/> 
 
 ## Contributors
 
