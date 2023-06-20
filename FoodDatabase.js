@@ -208,6 +208,12 @@ const FoodDatabase = () => {
         </Pressable>
 
         <FlatList
+          style={{
+            marginTop: 10,
+            flex: 1,
+            marginBottom: 100
+          }}
+          contentContainerStyle={{ paddingBottom: 20 }}
           data={data}
           nestedScrollEnabled
           renderItem={renderFoodItem}
