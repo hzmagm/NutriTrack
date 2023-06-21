@@ -11,7 +11,8 @@ A React Native app for tracking calories and planning meals. Set goals, track fo
 ## Installation
 1. Clone the repository.
 2. Navigate to the project directory.
-3. Install dependencies using the package manager of your choice (e.g., npm, yarn).
+3. Install expo `npm install expo`
+4. Install dependencies using the package manager of your choice (e.g., npm, yarn).
 
 ## Usage
 
