@@ -15,7 +15,7 @@ A React Native app for tracking calories and planning meals. Set goals, track fo
 
 ## Usage
 
-`npm expo start`
+`npx expo start`
 
 following this commande will allow you either use your browser or your personal phone
 
